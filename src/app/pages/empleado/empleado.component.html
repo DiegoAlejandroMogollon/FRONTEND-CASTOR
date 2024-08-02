@@ -1,0 +1,76 @@
+<div>
+    <h1>Empleados</h1>
+
+    <!-- Botón de Gestión -->
+    <button (click)="toggleGestion()" class="btn btn-primary">Gestionar Empleado</button>
+
+    <!-- Botones de Crear y Consultar Empleados -->
+    <div *ngIf="showGestionButtons" class="gestion-buttons">
+        <button (click)="showCrearEmpleado()" class="btn btn-secondary">Crear Empleado</button>
+        <button (click)="showConsultarEmpleados()" class="btn btn-secondary">Consultar Empleados</button>
+    </div>
+
+    <div *ngIf="showEmpleados">
+        <h3>Empleados</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Cédula</th>
+                    <th>Fecha de Ingreso</th>
+                    <th>Cargo</th>
+                    <th>Foto</th>
+                    <th>Modificar</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let empleado of empleados">
+                    <td>{{ empleado.nombre }}</td>
+                    <td>{{ empleado.cedula }}</td>
+                    <td>{{ empleado.fechaIngreso | date }}</td>
+                    <td>{{ empleado.cargo.nombre }}</td>
+                    <td><img [src]="getImageUrl(empleado.fotoRuta)" alt="{{ empleado.nombre }}" class="table-img" />
+                    </td>
+                    <td><button (click)="editEmpleado(empleado)" class="btn btn-warning"><i
+                                class="bi bi-pencil"></i></button></td>
+                    <td><button (click)="deleteEmpleado(empleado.id)" class="btn btn-danger"><i
+                                class="bi bi-trash"></i></button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="showCrear">
+        <form (ngSubmit)="addEmpleado()">
+            <input [(ngModel)]="newEmpleado.cedula" name="cedula" placeholder="Cedula" required />
+            <input [(ngModel)]="newEmpleado.nombre" name="nombre" placeholder="Nombre" required />
+            <input [(ngModel)]="newEmpleado.fechaIngreso" name="fechaIngreso" type="date" required />
+
+            <select [(ngModel)]="newEmpleado.cargoId" name="cargoId" required>
+                <option *ngFor="let tipo of tiposCargo" [value]="tipo.id">
+                    {{ tipo.nombre }}
+                </option>
+            </select>
+
+            <input type="file" id="fileInput" />
+            <button type="submit">Agregar Empleado</button>
+        </form>
+    </div>
+
+    <div *ngIf="isEditing && selectedEmpleado">
+        <h3>Modificar Empleado</h3>
+        <form (ngSubmit)="updateEmpleado()">
+            <input [(ngModel)]="selectedEmpleado.nombre" name="nombre" placeholder="Nombre" required />
+            <input [(ngModel)]="selectedEmpleado.cedula" name="cedula" placeholder="Cédula" required />
+            <input [(ngModel)]="selectedEmpleado.fechaIngreso" name="fechaIngreso" type="date" required />
+            <select [(ngModel)]="selectedEmpleado.cargo.idCargo" name="cargoId" required>
+                <option *ngFor="let tipo of tiposCargo" [value]="tipo.id">{{ tipo.nombre }}</option>
+            </select>
+            <td><img [src]="getImageUrl(selectedEmpleado.fotoRuta)" alt="{{ selectedEmpleado.nombre }}" class="table-img" />
+            </td>
+            <input type="file" id="fileInput" />
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button (click)="cancelEdit()" type="button" class="btn btn-secondary">Cancelar</button>
+        </form>
+    </div>
+</div>
